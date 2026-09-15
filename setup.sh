@@ -195,8 +195,18 @@ install_opencode() {
         return 0
     fi
 
-    curl -fsSL https://opencode.ai/install | bash
-    ok "OpenCode installed"
+    local attempt
+    for attempt in 1 2 3; do
+        if curl -fsSL https://opencode.ai/install | bash; then
+            if command -v opencode >/dev/null 2>&1; then
+                ok "OpenCode installed"
+                return 0
+            fi
+        fi
+        warn "Install attempt ${attempt}/3 failed — retrying in 3s..."
+        sleep 3
+    done
+    die "Failed to install OpenCode after 3 attempts"
 }
 
 # ─── Backup ────────────────────────────────────────────────────────

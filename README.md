@@ -21,6 +21,7 @@ Everything runs on free tiers and free models. No API keys required to start.
 | **6 agents** | architect, docker-ops, docs-writer, reviewer, security, test-writer |
 | **7 commands** | `/commit`, `/explain`, `/refactor`, `/release`, `/review`, `/security`, `/test` |
 | **10 skills** | git-workflow, code-review, commit-conventions, database-sql, docs, node-backend, python, security-review, testing, typescript-react |
+| **13 design skills** | vendored from [leonxlnx/taste-skill](https://github.com/leonxlnx/taste-skill) (MIT): design-taste-frontend, industrial-brutalist-ui, minimalist-ui, high-end-visual-design, redesign-existing-projects, stitch-design-taste, full-output-enforcement, gpt-taste, image-to-code, imagegen-frontend-web, imagegen-frontend-mobile, brandkit, design-taste-frontend-v1 |
 | **19+ external skills** | cloned from anthropics/skills and vercel-labs/agent-browser |
 | **2 project templates** | TypeScript/React, Python |
 | **shell strategy** | command-shell context instructions loaded every session |
@@ -197,7 +198,7 @@ setup-opencode/
 │   ├── command/          # 7 commands
 │   ├── instructions/     # shell-strategy.md
 │   ├── plugins/          # notificator plugin + sounds
-│   └── skills/           # 10 custom skills
+│   └── skills/           # 23 skills (10 custom + 13 vendored taste-skill)
 ├── templates/            # ts-react, python project starters
 ├── assets/               # demo.gif, og-image.png
 └── .github/
@@ -215,4 +216,4 @@ Run `shellcheck setup.sh` before opening a PR. CI validates the script and the p
 
 Released under the [MIT license](LICENSE).
 
-Built on these open-source projects: [OpenCode](https://opencode.ai) · [context7](https://context7.com) · [grep.app MCP](https://mcp.grep.app) · [agent-browser](https://github.com/vercel-labs/agent-browser) · [opencode-dcp](https://github.com/Opencode-DCP/opencode-dynamic-context-pruning) · [opencode-shell-strategy](https://github.com/JRedeker/opencode-shell-strategy) · [opencode-notificator](https://github.com/panta82/opencode-notificator) · [opencode-vibeguard](https://github.com/inkdust2021/opencode-vibeguard) · [opencode-gemini-auth](https://github.com/jenslys/opencode-gemini-auth)
+Built on these open-source projects: [OpenCode](https://opencode.ai) · [context7](https://context7.com) · [grep.app MCP](https://mcp.grep.app) · [agent-browser](https://github.com/vercel-labs/agent-browser) · [opencode-dcp](https://github.com/Opencode-DCP/opencode-dynamic-context-pruning) · [opencode-shell-strategy](https://github.com/JRedeker/opencode-shell-strategy) · [opencode-notificator](https://github.com/panta82/opencode-notificator) · [opencode-vibeguard](https://github.com/inkdust2021/opencode-vibeguard) · [opencode-gemini-auth](https://github.com/jenslys/opencode-gemini-auth) · [taste-skill](https://github.com/leonxlnx/taste-skill)

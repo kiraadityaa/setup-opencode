@@ -521,7 +521,7 @@ print_success() {
     echo -e "    • 5 MCP servers  (context7, gh_grep, agent-browser/filesystem, memory)"
     echo -e "    • 6 agents       (reviewer, security, test-writer, docs-writer, docker-ops, architect)"
     echo -e "    • 7 commands     (/commit, /review, /test, /security, /explain, /refactor, /release)"
-    echo -e "    • 10+ skills     (git, code-review, security, testing, TS/React, Python...)"
+    echo -e "    • 23 skills     (git, code-review, security, testing, TS/React, Python + 13 design-taste)"
     $NO_PLUGINS   || echo -e "    • 3 plugins     (gemini-auth, dcp, vibeguard)"
     $NO_NOTIFICATOR || echo -e "    • 1 plugin      (notificator — desktop notifications)"
     $NO_BROWSER   || echo -e "    • agent-browser  (Chrome for Testing)"

@@ -52,10 +52,10 @@ jobs:
           SKILLS=$(find payload/skills -name 'SKILL.md' | wc -l)
           echo "Agents:   $AGENTS (expect 6)"
           echo "Commands: $COMMANDS (expect 7)"
-          echo "Skills:   $SKILLS (expect 10)"
+          echo "Skills:   $SKILLS (expect 23)"
           test "$AGENTS" -ge 6
           test "$COMMANDS" -ge 7
-          test "$SKILLS" -ge 10
+          test "$SKILLS" -ge 23
           echo "✓ File counts OK"
 
       - name: Validate JSONC syntax
@@ -130,7 +130,7 @@ jobs:
           SKILLS=$(find "$OPENCODE_HOME/skills" -name 'SKILL.md' | wc -l)
           test "$AGENTS" -eq 6
           test "$COMMANDS" -eq 7
-          test "$SKILLS" -eq 10
+          test "$SKILLS" -eq 23
           echo "✓ Deployed: $AGENTS agents, $COMMANDS commands, $SKILLS skills"
 
   nightly:

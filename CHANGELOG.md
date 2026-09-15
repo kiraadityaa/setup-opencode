@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Vendored the 13-skill [taste-skill](https://github.com/leonxlnx/taste-skill)
+  suite (MIT) into `payload/skills/` — design-taste-frontend, industrial-brutalist-ui,
+  minimalist-ui, high-end-visual-design, redesign-existing-projects, stitch-design-taste,
+  full-output-enforcement, gpt-taste, image-to-code, imagegen-frontend-web,
+  imagegen-frontend-mobile, brandkit, design-taste-frontend-v1. Skill count 10 → 23.
+
 Changelog is generated automatically from `main` when a `v*` tag is pushed —
 see [.github/workflows/release.yml](.github/workflows/release.yml).
 

@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: Run shellcheck
+        run: shellcheck -x -s bash setup.sh
+
+  dry-run:
+    name: Dry Run
+    runs-on: ubuntu-latest
+    needs: shellcheck
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run dry-run
+        run: ./setup.sh --dry-run --no-browser --no-plugins --no-skills
+
+  validate-payload:
+    name: Validate Payload
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check required files exist
+        run: |
+          set -e
+          echo "Checking payload structure..."
+          test -f payload/opencode.jsonc
+          test -d payload/agent
+          test -d payload/command
+          test -d payload/skills
+          test -d payload/instructions
+          test -f payload/instructions/shell-strategy.md
+          test -f payload/plugins/opencode-notificator/notificator.js
+          test -f payload/plugins/opencode-notificator/notificator.jsonc
+          echo "✓ All required files present"
+
+      - name: Count files
+        run: |
+          AGENTS=$(find payload/agent -name '*.md' | wc -l)
+          COMMANDS=$(find payload/command -name '*.md' | wc -l)
+          SKILLS=$(find payload/skills -name 'SKILL.md' | wc -l)
+          echo "Agents:   $AGENTS (expect 6)"
+          echo "Commands: $COMMANDS (expect 7)"
+          echo "Skills:   $SKILLS (expect 10)"
+          test "$AGENTS" -ge 6
+          test "$COMMANDS" -ge 7
+          test "$SKILLS" -ge 10
+          echo "✓ File counts OK"
+
+      - name: Validate JSONC syntax
+        run: |
+          # Strip full-line comments (safe: never touches https:// inside strings)
+          sed 's|^[[:space:]]*//.*$||; s|^[[:space:]]*/\*.*\*/$||' payload/opencode.jsonc | \
+            sed 's/,\s*\]/]/g; s/,\s*\}/}/g' | \
+            grep -v '^\s*$' | \
+            python3 -m json.tool > /dev/null
+          echo "✓ opencode.jsonc is valid JSON"

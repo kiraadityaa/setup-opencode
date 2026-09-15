@@ -182,9 +182,18 @@ preflight() {
 
 # ─── Install OpenCode ──────────────────────────────────────────────
 install_opencode() {
-    if command -v opencode >/dev/null 2>&1; then
+    # opencode is looked up on PATH or in its documented install location
+    find_opencode() {
+        command -v opencode 2>/dev/null \
+            || { [ -x "$HOME/.opencode/bin/opencode" ] && echo "$HOME/.opencode/bin/opencode"; } \
+            || true
+    }
+
+    local found
+    found="$(find_opencode)"
+    if [ -n "$found" ]; then
         local ver
-        ver="$(opencode --version 2>/dev/null || echo 'unknown')"
+        ver="$("$found" --version 2>/dev/null || echo 'unknown')"
         ok "OpenCode already installed ($ver)"
         return 0
     fi
@@ -198,7 +207,15 @@ install_opencode() {
     local attempt
     for attempt in 1 2 3; do
         if curl -fsSL https://opencode.ai/install | bash; then
-            if command -v opencode >/dev/null 2>&1; then
+            found="$(find_opencode)"
+            if [ -n "$found" ]; then
+                # Register for the rest of this session too (not just $GITHUB_PATH)
+                local dir
+                dir="$(dirname "$found")"
+                case ":$PATH:" in
+                    *":${dir}:"*) ;;
+                    *) export PATH="${dir}:${PATH}" ;;
+                esac
                 ok "OpenCode installed"
                 return 0
             fi

@@ -66,3 +66,96 @@ jobs:
             grep -v '^\s*$' | \
             python3 -m json.tool > /dev/null
           echo "✓ opencode.jsonc is valid JSON"
+
+  integration:
+    name: Integration (real install)
+    runs-on: ubuntu-latest
+    needs: [shellcheck, validate-payload]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run real installer in disposable HOME
+        env:
+          OPENCODE_HOME: "${{ runner.temp }}/opencode-home/.config/opencode"
+        run: |
+          ./setup.sh \
+            --no-browser \
+            --no-plugins \
+            --no-notificator \
+            --no-templates \
+            --force \
+            --verbose
+
+      - name: Verify payload deployed to target
+        env:
+          OPENCODE_HOME: "${{ runner.temp }}/opencode-home/.config/opencode"
+        run: |
+          set -e
+          CONFIG="$OPENCODE_HOME/opencode.jsonc"
+          test -f "$CONFIG"
+          test -f "${OPENCODE_HOME}/instructions/shell-strategy.md"
+          test -d "${OPENCODE_HOME}/_deps/anthropic-skills"
+          echo "✓ Config + instructions + external skills present"
+
+      - name: Verify no leftover placeholder
+        env:
+          OPENCODE_HOME: "${{ runner.temp }}/opencode-home/.config/opencode"
+        run: |
+          if grep -q '__HOME__' "$OPENCODE_HOME/opencode.jsonc"; then
+            echo "::error::__HOME__ placeholder was not substituted"
+            exit 1
+          fi
+          echo "✓ __HOME__ substituted"
+
+      - name: Verify opencode validates the config
+        env:
+          OPENCODE_HOME: "${{ runner.temp }}/opencode-home/.config/opencode"
+        run: |
+          set -e
+          # Installed by setup.sh in the previous step
+          opencode debug config > /dev/null
+          echo "✓ opencode debug config OK"
+
+      - name: Verify deployed file counts
+        env:
+          OPENCODE_HOME: "${{ runner.temp }}/opencode-home/.config/opencode"
+        run: |
+          AGENTS=$(find "$OPENCODE_HOME/agent" -name '*.md' | wc -l)
+          COMMANDS=$(find "$OPENCODE_HOME/command" -name '*.md' | wc -l)
+          SKILLS=$(find "$OPENCODE_HOME/skills" -name 'SKILL.md' | wc -l)
+          test "$AGENTS" -eq 6
+          test "$COMMANDS" -eq 7
+          test "$SKILLS" -eq 10
+          echo "✓ Deployed: $AGENTS agents, $COMMANDS commands, $SKILLS skills"
+
+  nightly:
+    name: Nightly Full Install
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run full installer (all components)
+        env:
+          OPENCODE_HOME: "${{ runner.temp }}/nightly-home/.config/opencode"
+        run: |
+          ./setup.sh --force --verbose
+
+      - name: Verify MCP servers connect
+        env:
+          OPENCODE_HOME: "${{ runner.temp }}/nightly-home/.config/opencode"
+        run: |
+          CONNECTED=$(opencode mcp list 2>&1 | grep -c '✓' || true)
+          echo "MCP servers connected: $CONNECTED"
+          test "$CONNECTED" -ge 4
+          echo "✓ MCP connectivity confirmed"

@@ -3,6 +3,8 @@
 One-command setup for a fully-featured [OpenCode](https://opencode.ai) AI coding agent environment.
 
 [![license](https://img.shields.io/github/license/kiraadityaa/setup-opencode)](#license)
+[![release](https://img.shields.io/github/v/release/kiraadityaa/setup-opencode?sort=semver)](https://github.com/kiraadityaa/setup-opencode/releases)
+[![ci](https://github.com/kiraadityaa/setup-opencode/actions/workflows/ci.yml/badge.svg)](https://github.com/kiraadityaa/setup-opencode/actions/workflows/ci.yml)
 [![shellcheck](https://img.shields.io/badge/shellcheck-passing-brightgreen)](#contributing)
 [![platform](https://img.shields.io/badge/platform-macOS_%7C_Linux_%7C_WSL-blue)](#requirements)
 
@@ -92,6 +94,7 @@ The installer detects the environment and adapts automatically:
 | `--dry-run` | Preview every action without changing anything |
 | `--force` | Overwrite existing config (backup created first) |
 | `--verbose` | Show every command as it runs |
+| `--version` | Print the installer version |
 | `--uninstall` | Remove all setup-opencode files |
 | `--help` | Show usage |
 
@@ -183,6 +186,11 @@ An unmodified run of `./setup.sh --no-browser --no-plugins --no-skills --no-noti
 ```
 setup-opencode/
 ├── setup.sh              # installer (single entry point)
+├── VERSION               # current version (consumed by setup.sh --version)
+├── CHANGELOG.md          # release history
+├── CONTRIBUTING.md       # contributor guide
+├── CODE_OF_CONDUCT.md    # community standards
+├── SECURITY.md           # vulnerability reporting
 ├── payload/              # config shipped to ~/.config/opencode/
 │   ├── opencode.jsonc    # config template
 │   ├── agent/            # 6 agents
@@ -191,8 +199,12 @@ setup-opencode/
 │   ├── plugins/          # notificator plugin + sounds
 │   └── skills/           # 10 custom skills
 ├── templates/            # ts-react, python project starters
-├── assets/               # demo.gif
-└── .github/workflows/    # CI: shellcheck + payload validation
+├── assets/               # demo.gif, og-image.png
+└── .github/
+    ├── ISSUE_TEMPLATE/   # bug report + feature request forms
+    ├── PULL_REQUEST_TEMPLATE.md
+    ├── dependabot.yml
+    └── workflows/        # CI: shellcheck, integration, nightly + release
 ```
 
 ## Contributing

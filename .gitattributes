@@ -1,0 +1,13 @@
+# Normalize line endings — always LF in the repo
+* text=auto eol=lf
+
+# Binary assets — never merge, never diff
+*.gif binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.mp3 binary
+
+# GitHub linguist: demo assets are not code
+assets/demo.gif linguist-vendored
+assets/og-image.png linguist-vendored

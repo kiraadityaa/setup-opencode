@@ -7,6 +7,10 @@ set -euo pipefail
 
 # ─── Defaults ──────────────────────────────────────────────────────
 REPO_URL="https://github.com/kiraadityaa/setup-opencode"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VERSION_FILE="${SCRIPT_DIR}/VERSION"
+VERSION="$(cat "${VERSION_FILE}" 2>/dev/null || echo "0.0.0")"
+[ -n "${VERSION}" ] || VERSION="0.0.0"
 OPENCODE_HOME="${OPENCODE_HOME:-$HOME/.config/opencode}"
 DEPS_DIR="${OPENCODE_HOME}/_deps"
 BACKUP_DIR="${HOME}/.config"
@@ -78,10 +82,12 @@ Options:
   --force              Overwrite existing config (backs up first)
   --uninstall          Remove all setup-opencode files
   --verbose            Show all commands
+  --version            Print version and exit
   --help               Show this help
 
 Examples:
   ./setup.sh                          # Full install (recommended)
+  ./setup.sh --version                # Print version
   ./setup.sh --no-browser --dry-run   # Preview without browser
   ./setup.sh --force                  # Reinstall (backup existing first)
   ./setup.sh --uninstall              # Remove everything
@@ -101,6 +107,7 @@ parse_args() {
             --force)           FORCE=true ;;
             --uninstall)       UNINSTALL=true ;;
             --verbose)         VERBOSE=true ;;
+            --version|-V)      echo "setup-opencode ${VERSION}" && exit 0 ;;
             --help|-h)         usage ;;
             *)                 die "Unknown option: $1 (use --help)" ;;
         esac
@@ -515,7 +522,7 @@ main() {
     parse_args "$@"
 
     echo ""
-    echo -e "${BOLD}setup-opencode${NC} — One-command setup for OpenCode AI agent"
+    echo -e "${BOLD}setup-opencode${NC} — v${VERSION} — One-command setup for OpenCode AI agent"
     echo -e "${CYAN}https://github.com/kiraadityaa/setup-opencode${NC}"
     echo ""
 

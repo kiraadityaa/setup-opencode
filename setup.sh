@@ -480,7 +480,7 @@ validate_install() {
 print_success() {
     echo ""
     echo -e "${GREEN}${BOLD}╔══════════════════════════════════════════════╗${NC}"
-    echo -e "${GREEN}${BOLD}║     setup-opencode — Setup Complete! 🎉     ║${NC}"
+    echo -e "${GREEN}${BOLD}║       setup-opencode — Setup Complete!      ║${NC}"
     echo -e "${GREEN}${BOLD}╚══════════════════════════════════════════════╝${NC}"
     echo ""
     echo -e "  ${BOLD}Installed:${NC}"

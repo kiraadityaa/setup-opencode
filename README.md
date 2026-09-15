@@ -2,26 +2,37 @@
 
 One-command setup for a fully-featured [OpenCode](https://opencode.ai) AI coding agent environment.
 
-## What it installs
+[![license](https://img.shields.io/github/license/kiraadityaa/setup-opencode)](#license)
+[![shellcheck](https://img.shields.io/badge/shellcheck-passing-brightgreen)](#contributing)
+[![platform](https://img.shields.io/badge/platform-macOS_%7C_Linux_%7C_WSL-blue)](#requirements)
 
-| Component | Details | Cost |
-|---|---|---|
-| **5 MCP servers** | context7, gh_grep, agent-browser, filesystem, memory | Free |
-| **3 npm plugins** | gemini-auth, dynamic context pruning, vibeguard | Free |
-| **6 agents** | reviewer, security, test-writer, docs-writer, docker-ops, architect | Free |
-| **7 commands** | /commit, /review, /test, /security, /explain, /refactor, /release | Free |
-| **10 skills** | git, code-review, security, testing, TS/React, Python, SQL, docs | Free |
-| **Notificator** | Desktop notification plugin (audio + system) | Free |
-| **Project templates** | TypeScript/React, Python | Free |
-| **shell-strategy** | Command shell context optimization | Free |
-| **agent-browser** | Browser automation via Chrome for Testing | Free |
+---
 
-**Total cost: $0.00. No API keys required to start.**
+## What you get
+
+Everything runs on free tiers and free models. No API keys required to start.
+
+| Component | Details |
+|---|---|
+| **5 MCP servers** | context7 (docs), gh_grep (code search), agent-browser (browser automation), filesystem, memory |
+| **4 plugins** | gemini-auth, dynamic context pruning, vibeguard, notificator (desktop audio notifications) |
+| **6 agents** | architect, docker-ops, docs-writer, reviewer, security, test-writer |
+| **7 commands** | `/commit`, `/explain`, `/refactor`, `/release`, `/review`, `/security`, `/test` |
+| **10 skills** | git-workflow, code-review, commit-conventions, database-sql, docs, node-backend, python, security-review, testing, typescript-react |
+| **19+ external skills** | cloned from anthropics/skills and vercel-labs/agent-browser |
+| **2 project templates** | TypeScript/React, Python |
+| **shell strategy** | command-shell context instructions loaded every session |
+
+## Demo
+
+A real `./setup.sh` run, captured live in a fresh environment.
+
+![setup-opencode demo](assets/demo.gif)
 
 ## Quick start
 
 ```bash
-git clone https://github.com/kiraadityaa/setup-opencode.git
+git clone https://github.com/kiraadityaa/setup-opencode
 cd setup-opencode
 ./setup.sh
 ```
@@ -32,27 +43,59 @@ Or without cloning:
 curl -fsSL https://raw.githubusercontent.com/kiraadityaa/setup-opencode/main/setup.sh | bash
 ```
 
-## What it does NOT do
+> [!NOTE]
+> The installer only touches `~/.config/opencode/`. If a config already exists it is backed up to `~/.config/opencode.bak.<timestamp>` — never overwritten silently.
 
-- **No API keys** — You run `opencode auth login` after setup (GitHub Copilot + Gemini are free)
-- **No project changes** — Only touches `~/.config/opencode/` (backs up existing config first)
-- **No paid services** — Everything uses free tiers and free models
+## How it works
 
-## Flags
+```mermaid
+flowchart LR
+    U(["terminal"]) ==>|"./setup.sh"| S{{"setup.sh"}}
+    S ==>|"preflight + adapt"| O["~/.config/opencode/"]
+    S ==>|"copy"| T["~/opencode-ecosystem/templates"]
+    O --- M["5 MCP servers"]
+    O --- A["6 agents"]
+    O --- C["7 commands"]
+    O --- K["10+ skills"]
+    O --- P["plugins: gemini-auth, dcp, vibeguard, notificator"]
+    S -.->|"curl \\| bash (piped)"| G["GitHub tarball"]
+    G ==> O
+```
 
-| Flag | Default | Description |
-|---|---|---|
-| `--no-browser` | — | Skip agent-browser + Chrome (~200MB) |
-| `--no-notificator` | — | Skip desktop notification plugin |
-| `--no-plugins` | — | Skip all npm plugin installs |
-| `--no-skills` | — | Skip external skill repo clones |
-| `--no-templates` | — | Skip project template deployment |
-| `--force` | — | Overwrite existing config (backup first) |
-| `--dry-run` | — | Preview what will happen without changes |
-| `--verbose` | — | Show all commands being run |
-| `--uninstall` | — | Remove all setup-opencode files |
+The installer detects the environment and adapts automatically:
 
-Examples:
+| Environment | Adaptation |
+|---|---|
+| Docker / container | `--no-sandbox` added to agent-browser |
+| macOS | correct browser-install path |
+| Node.js missing | installed via nvm |
+| Piped install | payload downloaded from GitHub tarball |
+
+## Configuration
+
+### Flags
+
+**Component selection**
+
+| Flag | Description |
+|---|---|
+| `--no-browser` | Skip agent-browser + Chrome for Testing (~200 MB) |
+| `--no-notificator` | Skip the desktop notification plugin |
+| `--no-plugins` | Skip all npm plugin installs |
+| `--no-skills` | Skip external skill repo clones |
+| `--no-templates` | Skip project template deployment |
+
+**Execution control**
+
+| Flag | Description |
+|---|---|
+| `--dry-run` | Preview every action without changing anything |
+| `--force` | Overwrite existing config (backup created first) |
+| `--verbose` | Show every command as it runs |
+| `--uninstall` | Remove all setup-opencode files |
+| `--help` | Show usage |
+
+### Examples
 
 ```bash
 # Full install (recommended)
@@ -64,99 +107,100 @@ Examples:
 # Preview without making changes
 ./setup.sh --dry-run --verbose
 
-# Reinstall (backup existing first)
+# Reinstall after changes (existing config is backed up)
 ./setup.sh --force
 
 # Remove everything
 ./setup.sh --uninstall
 ```
 
+## First run
+
+1. Log in to the free providers:
+   ```bash
+   opencode auth login
+   ```
+   GitHub Copilot (Claude and GPT models) and Google Gemini are free via device-flow / OAuth.
+2. Launch OpenCode:
+   ```bash
+   opencode
+   ```
+3. Pick your model with `/models`. Defaults require no authentication:
+   `opencode/big-pickle` (primary), `opencode/mimo-v2.5-free` (small).
+4. Restart OpenCode after changing models.
+
+> [!TIP]
+> Everything already installed works the moment `opencode` starts — context7, gh_grep, memory, all agents, commands, and skills. Authentication only unlocks more model providers.
+
 ## Requirements
 
-- macOS, Linux, or Windows (WSL only)
-- `bash`, `curl`, `git` (required)
-- Node.js v18+ (will be installed via nvm if missing)
-- Optional: GitHub account for Copilot free auth
-- Optional: Google account for Gemini free auth
-
-## Environment detection
-
-The installer automatically detects and adapts to:
-
-| Environment | Adaptation |
-|---|---|
-| Docker/container | Adds `--no-sandbox` to agent-browser |
-| macOS | Uses appropriate package manager |
-| No Node.js | Installs via nvm |
-| Piped install | Downloads tarball from GitHub |
-
-## After setup
-
-```bash
-# 1. Login to free providers
-opencode auth login
-
-# 2. Launch OpenCode
-opencode
-
-# 3. Pick your model (after auth)
-/models
-
-# 4. Restart opencode
-```
-
-### Free model providers
-
-| Provider | Auth method | Models |
-|---|---|---|
-| **OpenCode default** | None (works immediately) | opencode/big-pickle, opencode/mimo-v2.5-free |
-| **GitHub Copilot** | Device flow (`opencode auth login`) | Claude Sonnet/Opus, GPT-4o |
-| **Google Gemini** | OAuth (`opencode auth login`) | Gemini 2.5 Pro |
+- **OS:** macOS, Linux, or Windows (WSL)
+- **CLI:** `bash`, `curl`, `git`
+- **Node.js:** v18+ (auto-installed via nvm when missing)
 
 ## Uninstall
 
 ```bash
 ./setup.sh --uninstall
-# or manually:
-rm -rf ~/.config/opencode
 ```
+
+This removes agents, commands, skills, instructions, plugins, `_deps/`, and templates. Your `~/.config/opencode/opencode.jsonc` and authentication are kept.
+
+## FAQ
+
+<details>
+<summary>Do I need any API keys?</summary>
+
+No. The default models (`opencode/big-pickle`, `opencode/mimo-v2.5-free`) work immediately. `opencode auth login` adds free GitHub Copilot and Google Gemini providers.
+</details>
+
+<details>
+<summary>Is it safe to re-run?</summary>
+
+Yes. The config is backed up to `~/.config/opencode.bak.<timestamp>` before any change, and without `--force` the installer asks before touching an existing config.
+</details>
+
+<details>
+<summary>Does it work on Windows?</summary>
+
+Native Windows is not supported. Use WSL: https://opencode.ai/docs/windows-wsl
+</details>
+
+<details>
+<summary>Can I use my own paid models?</summary>
+
+Yes. After setup, run `opencode auth login` for paid providers or run `/models` to switch to any model your account has access to.
+</details>
+
+<details>
+<summary>What does the demo GIF show?</summary>
+
+An unmodified run of `./setup.sh --no-browser --no-plugins --no-skills --no-notificator --no-templates --force` in a disposable environment. The same output you get locally.
+</details>
 
 ## Project structure
 
 ```
 setup-opencode/
-├── setup.sh              # Main installer (~400 lines)
-├── payload/
-│   ├── opencode.jsonc    # Config template
-│   ├── agent/            # 6 agent definitions
-│   ├── command/          # 7 command definitions
+├── setup.sh              # installer (single entry point)
+├── payload/              # config shipped to ~/.config/opencode/
+│   ├── opencode.jsonc    # config template
+│   ├── agent/            # 6 agents
+│   ├── command/          # 7 commands
 │   ├── instructions/     # shell-strategy.md
-│   ├── plugins/          # notificator (local)
+│   ├── plugins/          # notificator plugin + sounds
 │   └── skills/           # 10 custom skills
-├── templates/            # Project starters
-│   ├── ts-react/
-│   └── python/
-└── .github/workflows/    # CI: shellcheck + validation
+├── templates/            # ts-react, python project starters
+├── assets/               # demo.gif
+└── .github/workflows/    # CI: shellcheck + payload validation
 ```
 
 ## Contributing
 
-Contributions welcome! Please run `shellcheck setup.sh` before submitting PRs.
+Run `shellcheck setup.sh` before opening a PR. CI validates the script and the payload config on every push.
 
-## License
+## License · Credits
 
-MIT — see [LICENSE](LICENSE).
+Released under the [MIT license](LICENSE).
 
-## Credits
-
-Built on top of these open-source projects:
-
-- [OpenCode](https://opencode.ai) — The AI coding agent
-- [context7 MCP](https://context7.com) — Library docs MCP
-- [grep.app MCP](https://mcp.grep.app) — GitHub code search
-- [agent-browser](https://github.com/vercel-labs/agent-browser) — Browser automation
-- [opencode-dcp](https://github.com/Opencode-DCP/opencode-dynamic-context-pruning) — Context pruning
-- [opencode-shell-strategy](https://github.com/JRedeker/opencode-shell-strategy) — Shell context
-- [opencode-notificator](https://github.com/panta82/opencode-notificator) — Desktop notifications
-- [opencode-vibeguard](https://github.com/inkdust2021/opencode-vibeguard) — Safety guard
-- [opencode-gemini-auth](https://github.com/jenslys/opencode-gemini-auth) — Free Gemini auth
+Built on these open-source projects: [OpenCode](https://opencode.ai) · [context7](https://context7.com) · [grep.app MCP](https://mcp.grep.app) · [agent-browser](https://github.com/vercel-labs/agent-browser) · [opencode-dcp](https://github.com/Opencode-DCP/opencode-dynamic-context-pruning) · [opencode-shell-strategy](https://github.com/JRedeker/opencode-shell-strategy) · [opencode-notificator](https://github.com/panta82/opencode-notificator) · [opencode-vibeguard](https://github.com/inkdust2021/opencode-vibeguard) · [opencode-gemini-auth](https://github.com/jenslys/opencode-gemini-auth)

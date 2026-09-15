@@ -155,7 +155,8 @@ Built on top of these open-source projects:
 - [context7 MCP](https://context7.com) — Library docs MCP
 - [grep.app MCP](https://mcp.grep.app) — GitHub code search
 - [agent-browser](https://github.com/vercel-labs/agent-browser) — Browser automation
-- [opencode-dcp](https://github.com/nicekid1/opencode-dynamic-context-pruning) — Context pruning
-- [opencode-shell-strategy](https://github.com/nicekid1/opencode-shell-strategy) — Shell context
-- [opencode-notificator](https://github.com/nicekid1/opencode-notificator) — Desktop notifications
-- [opencode-vibeguard](https://github.com/nicekid1/opencode-vibeguard) — Safety guard
+- [opencode-dcp](https://github.com/Opencode-DCP/opencode-dynamic-context-pruning) — Context pruning
+- [opencode-shell-strategy](https://github.com/JRedeker/opencode-shell-strategy) — Shell context
+- [opencode-notificator](https://github.com/panta82/opencode-notificator) — Desktop notifications
+- [opencode-vibeguard](https://github.com/inkdust2021/opencode-vibeguard) — Safety guard
+- [opencode-gemini-auth](https://github.com/jenslys/opencode-gemini-auth) — Free Gemini auth

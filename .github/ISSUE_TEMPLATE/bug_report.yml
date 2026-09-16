@@ -1,0 +1,54 @@
+name: Bug report
+description: File a bug report
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Fill in the details below — the more precise, the faster we can fix it.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of `./setup.sh --version`
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Linux
+        - macOS
+        - WSL / Windows
+        - Container / Docker
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: node
+    attributes:
+      label: Node.js version
+      description: Output of `node -v`
+      placeholder: "v22.x"
+  - type: input
+    id: flags
+    attributes:
+      label: Flags used
+      description: The setup.sh flags you ran the installer with
+      placeholder: "--no-browser --force"
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: Paste the failing output / error message
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true

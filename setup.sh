@@ -5,42 +5,15 @@
 #
 set -euo pipefail
 
-# ─── Platform Detection ────────────────────────────────────────────
-OS="$(uname -s 2>/dev/null | tr '[:upper:]' '[:lower:]' || echo 'unknown')"
-ARCH="$(uname -m 2>/dev/null || echo 'unknown')"
-IS_WINDOWS=false
-IS_MACOS=false
-IS_CONTAINER=false
-
-case "$OS" in
-    msys*|mingw*|cygwin*)  IS_WINDOWS=true ;;
-    darwin*)               IS_MACOS=true   ;;
-esac
-
-if $IS_WINDOWS && ! command -v cygpath >/dev/null 2>&1; then
-    echo "Windows detected but cygpath (Git Bash/MSYS2) is missing." >&2
-    exit 1
-fi
-
 # ─── Defaults ──────────────────────────────────────────────────────
 REPO_URL="https://github.com/kiraadityaa/setup-opencode"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VERSION_FILE="${SCRIPT_DIR}/VERSION"
 VERSION="$(cat "${VERSION_FILE}" 2>/dev/null || echo "0.0.0")"
 [ -n "${VERSION}" ] || VERSION="0.0.0"
-if [ -z "${OPENCODE_HOME:-}" ]; then
-    if $IS_WINDOWS; then
-        OPENCODE_HOME="$(cygpath -m "$HOME/.config/opencode")"
-    else
-        OPENCODE_HOME="${HOME}/.config/opencode"
-    fi
-fi
+OPENCODE_HOME="${OPENCODE_HOME:-$HOME/.config/opencode}"
 DEPS_DIR="${OPENCODE_HOME}/_deps"
-if $IS_WINDOWS; then
-    BACKUP_DIR="$(cygpath -m "${HOME}/.config")"
-else
-    BACKUP_DIR="${HOME}/.config"
-fi
+BACKUP_DIR="${HOME}/.config"
 NO_BROWSER=false
 NO_NOTIFICATOR=false
 NO_PLUGINS=false
@@ -118,10 +91,6 @@ Examples:
   ./setup.sh --no-browser --dry-run   # Preview without browser
   ./setup.sh --force                  # Reinstall (backup existing first)
   ./setup.sh --uninstall              # Remove everything
-
-Windows:
-  Run from Git Bash (MSYS2/MINGW64). Native install (npm) and paths
-  are handled automatically.
 EOF
     exit 0
 }
@@ -166,19 +135,27 @@ preflight() {
     info "Checking prerequisites..."
 
     # OS detection
+    OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
+    ARCH="$(uname -m)"
+    IS_CONTAINER=false
+    IS_MACOS=false
+
     case "$OS" in
-        linux*|msys*|mingw*|cygwin*|darwin*) ;;
+        linux*)   ;;
+        darwin*)  IS_MACOS=true ;;
+        msys*|mingw*|cygwin*)
+            die "Windows native not supported. Use WSL: https://opencode.ai/docs/windows-wsl" ;;
         *)        warn "Unknown OS: $OS — proceeding anyway" ;;
     esac
 
     # Container detection
-    if { [ -f /.dockerenv ] || [ -f /.dockerd ] || grep -q docker /proc/1/cgroup 2>/dev/null; }; then
+    if [ -f /.dockerenv ] || grep -q docker /proc/1/cgroup 2>/dev/null; then
         IS_CONTAINER=true
         debug "Detected container environment"
     fi
 
     # Required commands
-    for cmd in bash curl git ${IS_WINDOWS:+cygpath}; do
+    for cmd in bash curl git; do
         command -v "$cmd" >/dev/null 2>&1 || die "Required: $cmd — install it first"
     done
 
@@ -209,7 +186,6 @@ install_opencode() {
     find_opencode() {
         command -v opencode 2>/dev/null \
             || { [ -x "$HOME/.opencode/bin/opencode" ] && echo "$HOME/.opencode/bin/opencode"; } \
-            || { [ -x "$HOME/.opencode/bin/opencode.exe" ] && echo "$HOME/.opencode/bin/opencode.exe"; } \
             || true
     }
 
@@ -224,23 +200,13 @@ install_opencode() {
 
     info "Installing OpenCode..."
     if $DRY_RUN; then
-        if $IS_WINDOWS; then
-            echo "  ${CYAN}[dry-run]${NC} npm install -g opencode-ai@latest"
-        else
-            echo "  ${CYAN}[dry-run]${NC} curl -fsSL https://opencode.ai/install | bash"
-        fi
+        echo "  ${CYAN}[dry-run]${NC} curl -fsSL https://opencode.ai/install | bash"
         return 0
     fi
 
     local attempt
     for attempt in 1 2 3; do
-        local succeeded=false
-        if $IS_WINDOWS; then
-            npm install -g opencode-ai@latest && succeeded=true
-        else
-            curl -fsSL https://opencode.ai/install | bash && succeeded=true
-        fi
-        if $succeeded; then
+        if curl -fsSL https://opencode.ai/install | bash; then
             found="$(find_opencode)"
             if [ -n "$found" ]; then
                 # Register for the rest of this session too (not just $GITHUB_PATH)
@@ -434,19 +400,9 @@ adapt_config() {
 
     # Replace __HOME__ placeholder with actual home
     if ! $DRY_RUN; then
-        local home_value="$HOME"
-        if $IS_WINDOWS; then
-            home_value="$(cygpath -m "$HOME")"
-        fi
         local home_escaped
-        home_escaped="$(echo "$home_value" | sed 's/[\/&]/\\&/g')"
+        home_escaped="$(echo "$HOME" | sed 's/[\/&]/\\&/g')"
         sed -i "s|__HOME__|${home_escaped}|g" "$config" 2>/dev/null || true
-        # Windows native: point MCP filesystem /tmp at a real temp dir
-        if $IS_WINDOWS; then
-            local tmp_win
-            tmp_win="$(cygpath -m "${LOCALAPPDATA:-$HOME/AppData/Local}/Temp")"
-            sed -i 's|"/tmp"|"'"${tmp_win}"'"|' "$config"
-        fi
     fi
 
     # Container + agent-browser → add no-sandbox flag
@@ -492,11 +448,6 @@ adapt_config() {
         fi
     fi
 
-    # Windows native: local MCP servers spawn via .cmd shims
-    if $IS_WINDOWS && ! $DRY_RUN; then
-        sed -i 's|"npx"|"npx.cmd"|g' "$config"
-    fi
-
     # Safety net: repair dangling commas left by removals (multi-line, portable)
     if ! $DRY_RUN; then
         perl -0777 -pi -e 's/,\s*([\]}])/$1/g' "$config"
@@ -517,11 +468,7 @@ deploy_templates() {
         return 0
     fi
 
-    local base_home="$HOME"
-    if $IS_WINDOWS; then
-        base_home="$(cygpath -m "$HOME")"
-    fi
-    local dest="${base_home}/opencode-ecosystem/templates"
+    local dest="${HOME}/opencode-ecosystem/templates"
     info "Deploying project templates → $dest"
     mkdir -p "$dest"
     run cp -r "${TEMPLATES_DIR}/ts-react" "$dest/"

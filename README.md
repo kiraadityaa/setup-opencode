@@ -6,7 +6,7 @@ One-command setup for a fully-featured [OpenCode](https://opencode.ai) AI coding
 [![release](https://img.shields.io/github/v/release/kiraadityaa/setup-opencode?sort=semver)](https://github.com/kiraadityaa/setup-opencode/releases)
 [![ci](https://github.com/kiraadityaa/setup-opencode/actions/workflows/ci.yml/badge.svg)](https://github.com/kiraadityaa/setup-opencode/actions/workflows/ci.yml)
 [![shellcheck](https://img.shields.io/badge/shellcheck-passing-brightgreen)](#contributing)
-[![platform](https://img.shields.io/badge/platform-macOS_%7C_Linux_%7C_Windows-blue)](#requirements)
+[![platform](https://img.shields.io/badge/platform-macOS_%7C_Linux_%7C_WSL-blue)](#requirements)
 
 ---
 
@@ -46,8 +46,6 @@ Or without cloning:
 curl -fsSL https://raw.githubusercontent.com/kiraadityaa/setup-opencode/main/setup.sh | bash
 ```
 
-**Windows (Git Bash / MSYS2):** `setup.sh` runs natively — no WSL required. Git Bash comes with Git for Windows. If the piped install fails, clone the repo first as above and run `./setup.sh` from Git Bash.
-
 > [!NOTE]
 > The installer only touches `~/.config/opencode/`. If a config already exists it is backed up to `~/.config/opencode.bak.<timestamp>` — never overwritten silently.
 
@@ -73,7 +71,6 @@ The installer detects the environment and adapts automatically:
 |---|---|
 | Docker / container | `--no-sandbox` added to agent-browser |
 | macOS | correct browser-install path |
-| Windows (Git Bash) | npm install, Windows paths, `npx.cmd` MCP shims |
 | Node.js missing | installed via nvm |
 | Piped install | payload downloaded from GitHub tarball |
 
@@ -141,7 +138,7 @@ The installer detects the environment and adapts automatically:
 
 ## Requirements
 
-- **OS:** macOS, Linux, or Windows (Git Bash native or WSL)
+- **OS:** macOS, Linux, or Windows (WSL)
 - **CLI:** `bash`, `curl`, `git`
 - **Node.js:** v18+ (auto-installed via nvm when missing)
 
@@ -170,13 +167,7 @@ Yes. The config is backed up to `~/.config/opencode.bak.<timestamp>` before any 
 <details>
 <summary>Does it work on Windows?</summary>
 
-Yes, natively. Run it from **Git Bash** (or MSYS2/MINGW64) instead of PowerShell or cmd:
-
-```bash
-./setup.sh
-```
-
-The installer auto-detects Git Bash, installs OpenCode via `npm install -g opencode-ai`, deploys config to `~/.config/opencode/` as Windows paths, and adapts MCP launchers to `npx.cmd`. WSL remains the recommended option for full-featured Unix compatibility: https://opencode.ai/docs/windows-wsl
+Native Windows is not supported. Use WSL: https://opencode.ai/docs/windows-wsl
 </details>
 
 <details>

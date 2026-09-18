@@ -16,7 +16,7 @@ Everything runs on free tiers and free models. No API keys required to start.
 
 | Component | Details |
 |---|---|
-| **5 MCP servers** | context7 (docs), gh_grep (code search), agent-browser (browser automation), filesystem, memory |
+| **7 MCP servers** | context7 (docs), gh_grep (code search), agent-browser (browser automation), filesystem, memory, chrome-devtools (browser debugging), sequential-thinking (structured reasoning) |
 | **4 plugins** | gemini-auth, dynamic context pruning, vibeguard, notificator (desktop audio notifications) |
 | **6 agents** | architect, docker-ops, docs-writer, reviewer, security, test-writer |
 | **7 commands** | `/commit`, `/explain`, `/refactor`, `/release`, `/review`, `/security`, `/test` |
@@ -40,14 +40,30 @@ cd setup-opencode
 ./setup.sh
 ```
 
-Or without cloning:
+Or without cloning (pulls the `main` branch tarball directly from GitHub):
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/kiraadityaa/setup-opencode/main/setup.sh | bash
 ```
 
+Verify the installation:
+
+```bash
+opencode mcp list          # every MCP server should show ✓ connected
+opencode debug config      # config validates without issues
+opencode                   # launch
+```
+
+> [!TIP]
+> Re-running the installer is safe: without `--force` it prompts before touching your existing config, and with `--force` it backs the config up to `~/.config/opencode.bak.<timestamp>` first.
+
 > [!NOTE]
-> The installer only touches `~/.config/opencode/`. If a config already exists it is backed up to `~/.config/opencode.bak.<timestamp>` — never overwritten silently.
+> The installer touches three locations:
+> 1. `~/.config/opencode/` — global OpenCode config, agents, commands, skills, plugins
+> 2. `~/opencode-ecosystem/templates` — project starter templates
+> 3. npm global packages — agent-browser and OpenCode plugins
+>
+> If a config already exists it is backed up to `~/.config/opencode.bak.<timestamp>` — never overwritten silently.
 
 ## How it works
 
@@ -56,7 +72,7 @@ flowchart LR
     U(["terminal"]) ==>|"./setup.sh"| S{{"setup.sh"}}
     S ==>|"preflight + adapt"| O["~/.config/opencode/"]
     S ==>|"copy"| T["~/opencode-ecosystem/templates"]
-    O --- M["5 MCP servers"]
+    O --- M["7 MCP servers"]
     O --- A["6 agents"]
     O --- C["7 commands"]
     O --- K["10+ skills"]
@@ -134,7 +150,7 @@ The installer detects the environment and adapts automatically:
 4. Restart OpenCode after changing models.
 
 > [!TIP]
-> Everything already installed works the moment `opencode` starts — context7, gh_grep, memory, all agents, commands, and skills. Authentication only unlocks more model providers.
+> Everything already installed works the moment `opencode` starts — context7, gh_grep, chrome-devtools, sequential-thinking, all agents, commands, and skills. Authentication only unlocks more model providers.
 
 ## Requirements
 

@@ -15,8 +15,8 @@ shellcheck -x -s bash setup.sh
 Before opening a PR, run:
 
 ```bash
-./setup.sh --dry-run                  # Preview everything
-./setup.sh --version                  # Verify version flag works
+bash setup.sh --dry-run                  # Preview everything
+bash setup.sh --version                  # Verify version flag works
 shellcheck -x -s bash setup.sh        # Static analysis (must be clean)
 ```
 

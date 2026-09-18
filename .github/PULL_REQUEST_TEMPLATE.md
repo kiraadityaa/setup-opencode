@@ -16,8 +16,8 @@
 ## Testing
 
 - [ ] `shellcheck -x -s bash setup.sh` passes
-- [ ] `./setup.sh --dry-run` verified
-- [ ] `./setup.sh --version` verified
+- [ ] `bash setup.sh --dry-run` verified
+- [ ] `bash setup.sh --version` verified
 - [ ] Payload JSONC validation passes
 
 ## Checklist

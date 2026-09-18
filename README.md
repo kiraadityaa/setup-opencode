@@ -28,7 +28,7 @@ Everything runs on free tiers and free models. No API keys required to start.
 
 ## Demo
 
-A real `./setup.sh` run, captured live in a fresh environment.
+A real `bash setup.sh` run, captured live in a fresh environment.
 
 ![setup-opencode demo](assets/demo.gif)
 
@@ -37,7 +37,7 @@ A real `./setup.sh` run, captured live in a fresh environment.
 ```bash
 git clone https://github.com/kiraadityaa/setup-opencode
 cd setup-opencode
-./setup.sh
+bash setup.sh
 ```
 
 Or without cloning (pulls the `main` branch tarball directly from GitHub):
@@ -69,7 +69,7 @@ opencode                   # launch
 
 ```mermaid
 flowchart LR
-    U(["terminal"]) ==>|"./setup.sh"| S{{"setup.sh"}}
+    U(["terminal"]) ==>|"bash setup.sh"| S{{"setup.sh"}}
     S ==>|"preflight + adapt"| O["~/.config/opencode/"]
     S ==>|"copy"| T["~/opencode-ecosystem/templates"]
     O --- M["7 MCP servers"]
@@ -119,19 +119,19 @@ The installer detects the environment and adapts automatically:
 
 ```bash
 # Full install (recommended)
-./setup.sh
+bash setup.sh
 
 # Minimal — no browser, no plugins
-./setup.sh --no-browser --no-plugins
+bash setup.sh --no-browser --no-plugins
 
 # Preview without making changes
-./setup.sh --dry-run --verbose
+bash setup.sh --dry-run --verbose
 
 # Reinstall after changes (existing config is backed up)
-./setup.sh --force
+bash setup.sh --force
 
 # Remove everything
-./setup.sh --uninstall
+bash setup.sh --uninstall
 ```
 
 ## First run
@@ -161,7 +161,7 @@ The installer detects the environment and adapts automatically:
 ## Uninstall
 
 ```bash
-./setup.sh --uninstall
+bash setup.sh --uninstall
 ```
 
 This removes agents, commands, skills, instructions, plugins, `_deps/`, and templates. Your `~/.config/opencode/opencode.jsonc` and authentication are kept.
@@ -195,7 +195,7 @@ Yes. After setup, run `opencode auth login` for paid providers or run `/models` 
 <details>
 <summary>What does the demo GIF show?</summary>
 
-An unmodified run of `./setup.sh --no-browser --no-plugins --no-skills --no-notificator --no-templates --force` in a disposable environment. The same output you get locally.
+An unmodified run of `bash setup.sh --no-browser --no-plugins --no-skills --no-notificator --no-templates --force` in a disposable environment. The same output you get locally.
 </details>
 
 ## Project structure

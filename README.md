@@ -235,6 +235,11 @@ setup-opencode/
 
 Run `shellcheck setup.sh` before opening a PR. CI validates the script and the payload config on every push.
 
+## Related
+
+- **[opencode-doctor](https://github.com/kiraadityaa/opencode-doctor)** — diagnose and safely repair your opencode setup (`bash doctor.sh`, JSON reports, `--fix` repairs).
+- **[opencode-blueprints](https://github.com/kiraadityaa/opencode-blueprints)** — starter templates for TypeScript/React and Python projects.
+
 ## License · Credits
 
 Released under the [MIT license](LICENSE).

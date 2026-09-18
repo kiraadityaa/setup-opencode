@@ -68,6 +68,13 @@
     "agent-browser": {
       "type": "local",
       "command": ["agent-browser", "mcp", "--tools", "core"],
+      // Chrome can't init its sandbox on Linux containers, WSL, VMs, and CI
+      // runners (AppArmor restricted user namespaces) — see "No usable sandbox".
+      // --no-sandbox is harmless on macOS/Windows; remove to re-enable
+      // the Chromium sandbox (only when nothing else breaks).
+      "environment": {
+        "AGENT_BROWSER_ARGS": "--no-sandbox"
+      },
       "enabled": true
     },
     "filesystem": {

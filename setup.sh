@@ -405,22 +405,13 @@ adapt_config() {
         sed -i "s|__HOME__|${home_escaped}|g" "$config" 2>/dev/null || true
     fi
 
-    # Container + agent-browser → add no-sandbox flag
-    if $IS_CONTAINER && ! $NO_BROWSER; then
-        if ! $DRY_RUN; then
-            sed -i '/"agent-browser": {/,/}/ {
-                /"enabled": true/a\      "environment": { "AGENT_BROWSER_ARGS": "--no-sandbox" }
-            }' "$config" 2>/dev/null || true
-        fi
-        ok "Added --no-sandbox for container environment"
-    fi
-
     # --no-browser → swap agent-browser MCP for Playwright (headless)
     if $NO_BROWSER; then
         if ! $DRY_RUN; then
             sed -i 's|"agent-browser": {|"playwright": {|' "$config"
             sed -i 's|"command": \["agent-browser", "mcp", "--tools", "core"\]|"command": ["npx", "-y", "@playwright/mcp@latest", "--browser", "chrome", "--headless"]|' "$config"
-            sed -i '/AGENT_BROWSER_ARGS/d' "$config"
+            # Drop the baked-in --no-sandbox comment block + environment (Playwright manages its own flags)
+            sed -i "/^      \/\/ Chrome can't init its sandbox/,/^      },$/d" "$config"
         fi
         ok "MCP agent-browser → playwright"
     fi

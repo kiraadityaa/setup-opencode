@@ -15,6 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   full-output-enforcement, gpt-taste, image-to-code, imagegen-frontend-web,
   imagegen-frontend-mobile, brandkit, design-taste-frontend-v1. Skill count 10 → 23.
 
+### Fixed
+
+- agent-browser MCP crashed with "No usable sandbox" on Linux containers, WSL, VMs,
+  and CI runners because the `--no-sandbox` flag was only injected when the installer
+  detected a container. The `AGENT_BROWSER_ARGS=--no-sandbox` environment is now baked
+  into the payload config unconditionally (see the `agent-browser` entry in
+  `payload/opencode.jsonc`). With `--no-browser`, the environment block is dropped while
+  swapping to the headless Playwright MCP.
+
 Changelog is generated automatically from `main` when a `v*` tag is pushed —
 see [.github/workflows/release.yml](.github/workflows/release.yml).
 

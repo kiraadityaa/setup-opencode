@@ -85,7 +85,8 @@ The installer detects the environment and adapts automatically:
 
 | Environment | Adaptation |
 |---|---|
-| Docker / container | `--no-sandbox` added to agent-browser |
+| Agent-browser MCP | ships with `AGENT_BROWSER_ARGS=--no-sandbox` baked in — Chrome's sandbox cannot start on Linux containers, WSL, VMs, and CI runners ("No usable sandbox"), so the flag is set unconditionally. It is harmless on macOS/Windows; remove it to re-enable the sandbox |
+| `--no-browser` | agent-browser swapped for headless Playwright MCP (sandbox env dropped) |
 | macOS | correct browser-install path |
 | Node.js missing | installed via nvm |
 | Piped install | payload downloaded from GitHub tarball |
@@ -190,6 +191,12 @@ Native Windows is not supported. Use WSL: https://opencode.ai/docs/windows-wsl
 <summary>Can I use my own paid models?</summary>
 
 Yes. After setup, run `opencode auth login` for paid providers or run `/models` to switch to any model your account has access to.
+</details>
+
+<details>
+<summary>Why does agent-browser fail with "No usable sandbox"?</summary>
+
+Chrome's sandbox needs unprivileged user namespaces, which are restricted on many Linux containers, WSL, VMs, and CI runners — so the agent-browser MCP ships with `AGENT_BROWSER_ARGS=--no-sandbox` baked into the recipe. That flag is harmless on macOS/Windows. If you are on a hardened Linux desktop and everything works, you can re-enable the sandbox by removing the `environment` block from the `agent-browser` entry in `~/.config/opencode/opencode.jsonc`.
 </details>
 
 <details>

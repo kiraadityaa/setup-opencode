@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New global instruction `payload/instructions/compress.md` — keep `compress`
+  tool summaries JSON-safe (plain Markdown, no double quotes or nested code), and
+  registered it in the deployed `opencode.jsonc` so compression never fails with
+  a parse error.
+
 - Vendored the 13-skill [taste-skill](https://github.com/leonxlnx/taste-skill)
   suite (MIT) into `payload/skills/` — design-taste-frontend, industrial-brutalist-ui,
   minimalist-ui, high-end-visual-design, redesign-existing-projects, stitch-design-taste,

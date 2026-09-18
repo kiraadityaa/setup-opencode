@@ -46,7 +46,7 @@
       "docker push*": "deny",
       "gem publish*": "deny",
       "rm -rf *": "deny",
-      "sudo *": "deny"
+      "sudo *": "allow"
     },
     "external_directory": {
       "*": "allow"
@@ -78,6 +78,16 @@
     "memory": {
       "type": "local",
       "command": ["npx", "-y", "@modelcontextprotocol/server-memory"],
+      "enabled": true
+    },
+    "chrome-devtools": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
+      "enabled": true
+    },
+    "sequential-thinking": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
       "enabled": true
     }
   },

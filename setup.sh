@@ -518,7 +518,7 @@ print_success() {
     echo -e "${GREEN}${BOLD}╚══════════════════════════════════════════════╝${NC}"
     echo ""
     echo -e "  ${BOLD}Installed:${NC}"
-    echo -e "    • 5 MCP servers  (context7, gh_grep, agent-browser/filesystem, memory)"
+    echo -e "    • 7 MCP servers  (context7, gh_grep, agent-browser, filesystem, memory, chrome-devtools, sequential-thinking)"
     echo -e "    • 6 agents       (reviewer, security, test-writer, docs-writer, docker-ops, architect)"
     echo -e "    • 7 commands     (/commit, /review, /test, /security, /explain, /refactor, /release)"
     echo -e "    • 23 skills     (git, code-review, security, testing, TS/React, Python + 13 design-taste)"
